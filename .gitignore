@@ -1,0 +1,3 @@
+*.pyc
+series_watcher/db.sqlite3
+series_watcher/series-watcher.log
