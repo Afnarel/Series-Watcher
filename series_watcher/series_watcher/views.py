@@ -13,7 +13,9 @@ from django.utils import simplejson
 
 def home(request):
     if request.user.is_authenticated():
-        watched_episodes = request.user.episode_set.all()
+        watched_episodes = request.user.episode_set.order_by(
+            'season__series__name',
+            'season__number', 'real_number', 'name').all()
     else:
         watched_episodes = []
     return render(request, 'home.html', {
@@ -23,7 +25,7 @@ def home(request):
 
 @login_required
 def series(request):
-    series = Series.objects.all()
+    series = Series.objects.order_by('name').all()
     return render(request, 'series.html', {
         'title': _('Series'),
         'series': series})
