@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% load url from future %}
+
+{% block javascript %}
+
+<script type="text/javascript">
+$(document).ready(function() {
+    $('.serie-link').on('click', function() {
+        $.ajax({
+            type: "POST",
+            url: "{% url 'toggle_subscription' %}",
+            cache: false,
+            //dataType: "text",
+            context: $(this),
+            data: {
+                'csrfmiddlewaretoken': csrftoken,
+                'sid': $(this).attr('sid')
+            },
+            success: function(data) {
+                var json = $.parseJSON(data);
+                if(json['result'] == 'success') {
+                    $(this).text(json['text']);
+                    if(json['text'] == 'Subscribe') {
+                        $(this).prev().attr('class', 'red')
+                    }
+                    else {
+                        $(this).prev().attr('class', 'green')
+                    }
+                }
+            }
+        });
+    });
+});
+</script>
+
+{% endblock %}
+
+{% block css %}
+<style>
+
+.red {
+    color: #FF0000;
+}
+
+.green {
+    color: #00FF00;
+}
+
+</style>
+{% endblock %}
+
+{% block content %}
+<ul>
+{% for serie in series %}
+<li>
+{% if serie in user.series_set.all %}
+<span class="green">{{ serie }}</span>
+(<a href="#" class="serie-link" sid="{{serie.id}}">Unsubscribe</a>)
+{% else %}
+<span class="red">{{ serie }}</span>
+(<a href="#" class="serie-link" sid="{{serie.id}}">Subscribe</a>)
+{% endif %}
+</li>
+{% endfor %}
+</ul>
+
+{% endblock %}

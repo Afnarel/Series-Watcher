@@ -8,4 +8,4 @@ cd $SCRIPT_PATH
 
 . $VIRTUALENV/bin/activate
 
-python -u manage.py populate >> series-watcher.log
+python -u manage.py populate >> series-watcher.log 2>&1

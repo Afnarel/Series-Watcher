@@ -32,6 +32,7 @@ class Episode(models.Model):
     real_number = models.CharField(max_length=5)
     season = models.ForeignKey(Season)
     url = models.URLField(blank=True)
+    watchers = models.ManyToManyField(User, blank=True)
 
     def __unicode__(self):
         if self.name:

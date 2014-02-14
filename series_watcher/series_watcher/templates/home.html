@@ -1,4 +1,55 @@
 {% extends 'base.html' %}
 
+{% load url from future %}
+
+{% block javascript %}
+
+<script type="text/javascript">
+$(document).ready(function() {
+    $('.episode-link').on('click', function() {
+        $.ajax({
+            type: "POST",
+            url: "{% url 'remove_watch' %}",
+            cache: false,
+            dataType: "text",
+            context: $(this),
+            data: {
+                'csrfmiddlewaretoken': csrftoken,
+                'epid': $(this).attr('epid')
+            },
+            success: function(data) {
+                var json = $.parseJSON(data);
+                if(json['result'] == 'success') {
+                    $(this).parent().remove();
+                    ul = $('#episodes-list li');
+                    if(ul.length == 0) {
+                        $('#episodes-list').remove();
+                        $('#list-title').remove();
+                    }
+                }
+            }
+        });
+    });
+});
+</script>
+
+{% endblock %}
+
 {% block content %}
+
+{% if user.is_authenticated %}
+
+{% if episodes %}
+<p id="list-title">The following episodes are available from series that you
+have subscribed to:</p>
+    <ul id="episodes-list">
+    {% for episode in episodes %}
+    <li><a href="{{episode.url}}">{{episode}}</a> (<a href="#"
+        class="episode-link" epid="{{episode.id}}">I've seen it</a>)</li>
+    {% endfor %}
+    </ul>
+{% endif %}
+
+{% endif %}
+
 {% endblock %}
