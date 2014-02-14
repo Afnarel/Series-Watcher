@@ -154,12 +154,18 @@ class Command(BaseCommand):
                         url=ep_url)
 
                     if new_episode:
-                        if ep_text.encode('utf-8').strip() != unicode(
-                                episode).encode('utf-8'):
-                            self.log("Episode: " + ep_text.encode('utf-8'))
-                            self.log("stored in DB as: " + unicode(
-                                episode).encode('utf-8'))
-                            self.log()
+                        self.log(unicode(episode).encode('utf-8'))
+                        # For each user who subscribed to the series
+                        # inform him that a new episode is out
+                        for u in _series.subscribers.all():
+                            episode.watchers.add(u)
+
+                        # if ep_text.encode('utf-8').strip() != unicode(
+                        #         episode).encode('utf-8'):
+                        #     self.log("Episode: " + ep_text.encode('utf-8'))
+                        #     self.log("stored in DB as: " + unicode(
+                        #         episode).encode('utf-8'))
+                        #     self.log()
 
                 season_nb += 1
 

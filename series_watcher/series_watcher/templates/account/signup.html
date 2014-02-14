@@ -3,9 +3,6 @@
 {% load url from future %}
 {% load i18n %}
 
-{% block title %}Series Watcher - Sign up{% endblock %}
-{% block header %}<h1>Sign up</h1>{% endblock %}
-
 {% block content %}
     
     {% if user.is_authenticated %}
@@ -24,5 +21,3 @@
         
     {% endif %}
 {% endblock %}
-
-
