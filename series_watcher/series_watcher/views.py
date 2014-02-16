@@ -15,7 +15,7 @@ def home(request):
     if request.user.is_authenticated():
         watched_episodes = request.user.episode_set.order_by(
             'season__series__name',
-            'season__number', 'real_number', 'name').all()
+            'season__number', 'number', 'name').all()
     else:
         watched_episodes = []
     return render(request, 'home.html', {
