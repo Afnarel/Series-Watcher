@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 
 class Series(models.Model):
     name = models.CharField(max_length=100)
+    url_keyword = models.CharField(max_length=30)
     synopsis = models.TextField(blank=True)
     genre = models.CharField(max_length=30, blank=True)
     release_date = models.CharField(blank=True, max_length=30)

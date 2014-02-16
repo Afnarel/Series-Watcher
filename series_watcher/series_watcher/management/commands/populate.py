@@ -2,11 +2,13 @@
 
 from django.core.management.base import BaseCommand, CommandError
 from series_watcher.models import Series, Season, Episode
+from django.core.exceptions import ObjectDoesNotExist
 
 from urllib2 import urlopen, URLError
 from bs4 import BeautifulSoup
 import re
 from time import strftime
+import socket
 
 
 class Command(BaseCommand):
@@ -21,7 +23,7 @@ class Command(BaseCommand):
     def getParsedData(self, url):
         try:
             page = urlopen(url)
-        except URLError:
+        except (URLError, socket.error):
             raise CommandError('URL %s does not respond' % url)
         return BeautifulSoup(page.read())
 
@@ -47,9 +49,20 @@ class Command(BaseCommand):
         # Parse the data about the series
         html = self.getParsedData(url)
 
+        # Get the series name from URL (url_keyword)
+        p = re.compile('http://stream-tv.me/watch-(.*)-online.*')
+        m = p.match(url)
+        url_keyword = m.group(1)
+
         # Test if the series exists. If it doesn't, create
-        # one with just a URL
-        _series, is_new = Series.objects.get_or_create(url=url)
+        # one with just a URL and a URL keyword
+        try:
+            _series = Series.objects.get(url_keyword=url_keyword)
+            is_new = False
+        except ObjectDoesNotExist:
+            _series = Series.objects.create(url=url, url_keyword=url_keyword)
+            is_new = True
+        # _series, is_new = Series.objects.get_or_create(url=url)
 
         # If the series has just been created (or if we want to
         # perform a complete update), we need to fill in the
