@@ -8,7 +8,9 @@ from urllib2 import urlopen, URLError
 from bs4 import BeautifulSoup
 import re
 from time import strftime
-import socket
+from socket import error as socket_error
+from httplib import BadStatusLine
+from traceback import format_exc
 
 
 class Command(BaseCommand):
@@ -23,8 +25,13 @@ class Command(BaseCommand):
     def getParsedData(self, url):
         try:
             page = urlopen(url)
-        except (URLError, socket.error):
+        except (URLError, socket_error, BadStatusLine) as e:
+            s = "Error for URL {0}:\n\t{1}: {2}".format(
+                url, e.errno, e.strerror)
+            self.log(s)
             raise CommandError('URL %s does not respond' % url)
+        except:
+            self.log(format_exc())
         return BeautifulSoup(page.read())
 
     def createOrUpdateSeries(self):
