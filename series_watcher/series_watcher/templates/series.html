@@ -11,7 +11,7 @@ $(document).ready(function() {
             type: "POST",
             url: "{% url 'toggle_subscription' %}",
             cache: false,
-            //dataType: "text",
+            dataType: "text",
             context: $(this),
             data: {
                 'csrfmiddlewaretoken': csrftoken,
@@ -56,10 +56,10 @@ $(document).ready(function() {
 <li>
 {% if serie in user.series_set.all %}
 <span class="green">{{ serie }}</span>
-(<a href="#" class="serie-link" sid="{{serie.id}}">Unsubscribe</a>)
+(<a href="javascript:;" class="serie-link" sid="{{serie.id}}">Unsubscribe</a>)
 {% else %}
 <span class="red">{{ serie }}</span>
-(<a href="#" class="serie-link" sid="{{serie.id}}">Subscribe</a>)
+(<a href="javascript:;" class="serie-link" sid="{{serie.id}}">Subscribe</a>)
 {% endif %}
 </li>
 {% endfor %}

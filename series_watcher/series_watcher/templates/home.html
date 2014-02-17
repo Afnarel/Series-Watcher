@@ -44,7 +44,7 @@ $(document).ready(function() {
 have subscribed to:</p>
     <ul id="episodes-list">
     {% for episode in episodes %}
-    <li><a href="{{episode.url}}">{{episode}}</a> (<a href="#"
+    <li><a href="{{episode.url}}">{{episode}}</a> (<a href="javascript:;"
         class="episode-link" epid="{{episode.id}}">I've seen it</a>)</li>
     {% endfor %}
     </ul>

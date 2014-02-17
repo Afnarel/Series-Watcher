@@ -7,6 +7,7 @@ from urllib2 import urlopen, URLError
 from bs4 import BeautifulSoup
 import re
 from time import strftime
+import socket
 
 
 class Command(BaseCommand):
@@ -21,7 +22,7 @@ class Command(BaseCommand):
     def getParsedData(self, url):
         try:
             page = urlopen(url)
-        except URLError:
+        except URLError, socket.error:
             raise CommandError('URL %s does not respond' % url)
         return BeautifulSoup(page.read())
 
