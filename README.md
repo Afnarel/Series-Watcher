@@ -34,12 +34,13 @@ to set the VIRTUALENV to your own virtualenv. Then, symlink this script into
 /etc/cron.hourly/ : `ln -s series-watcher-cron.sh /etc/cron.hourly`.
 If this does not work, run `crontab -e` (as root) and add the following at the
 end:
+~~~
     SHELL=/bin/bash
     @hourly /etc/cron.hourly/series-watcher-cron.sh
+~~~
 
 
 Make sure that the cron daemon is running.
-
 On ArchLinux with systemctl (replace 'cronie' with 'dcron' if needed):
   * `systemctl is-active cronie` to check if it is running
   * `systemctl start cronie` to start it during this session
