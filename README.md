@@ -35,8 +35,8 @@ to set the VIRTUALENV to your own virtualenv. Then, symlink this script into
 If this does not work, run `crontab -e` (as root) and add the following at the
 end:
 ~~~
-    SHELL=/bin/bash
-    @hourly /etc/cron.hourly/series-watcher-cron.sh
+SHELL=/bin/bash
+@hourly /etc/cron.hourly/series-watcher-cron.sh
 ~~~
 
 
