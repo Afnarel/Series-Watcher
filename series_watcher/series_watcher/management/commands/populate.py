@@ -57,9 +57,18 @@ class Command(BaseCommand):
         html = self.getParsedData(url)
 
         # Get the series name from URL (url_keyword)
-        p = re.compile('http://stream-tv.me/watch-(.*)-online.*')
-        m = p.match(url)
-        url_keyword = m.group(1)
+        try:
+            p = re.compile('http://stream-tv.me/watch-(.*)-online.*')
+            m = p.match(url)
+            print url,
+            url_keyword = m.group(1)
+            print url_keyword
+        except AttributeError:
+            p = re.compile('http://stream-tv.me/watch-([^/]*)/')
+            m = p.match(url)
+            print url,
+            url_keyword = m.group(1)
+            print url_keyword
 
         # Test if the series exists. If it doesn't, create
         # one with just a URL and a URL keyword
@@ -80,9 +89,17 @@ class Command(BaseCommand):
 
             # Name
             title = html.find('div', class_='title').h2.text
-            p = re.compile('Watch (.*) Online')
-            m = p.match(title)
-            name = m.group(1)
+            try:
+                p = re.compile('Watch (.*) Online')
+                m = p.match(title)
+                name = m.group(1)
+                print name
+            except AttributeError:
+                p = re.compile('Watch (.*)')
+                m = p.match(title)
+                name = m.group(1)
+                print name
+
             _series.name = name
 
             entry = html.find('div', class_='entry').findAll('p')[:3]
@@ -132,9 +149,11 @@ class Command(BaseCommand):
                     series=_series)
                 for ep_tag in ul.findAll('a'):
                     ep_url = ep_tag.get('href')
+                    if not ep_url:
+                        ep_url = '#'
                     ep_text = ep_tag.text
 
-                    # Patch a problem of uncloser unordered list...
+                    # Patch a problem of unclosed unordered list...
                     regexp = ".*Season (\d*) .*"
                     p = re.compile(regexp)
                     m = p.match(ep_text)
