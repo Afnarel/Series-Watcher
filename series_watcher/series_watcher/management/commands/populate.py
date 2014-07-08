@@ -2,12 +2,15 @@
 
 from django.core.management.base import BaseCommand, CommandError
 from series_watcher.models import Series, Season, Episode
+from django.core.exceptions import ObjectDoesNotExist
 
 from urllib2 import urlopen, URLError
 from bs4 import BeautifulSoup
 import re
 from time import strftime
-import socket
+from socket import error as socket_error
+from httplib import BadStatusLine
+from traceback import format_exc
 
 
 class Command(BaseCommand):
@@ -22,8 +25,13 @@ class Command(BaseCommand):
     def getParsedData(self, url):
         try:
             page = urlopen(url)
-        except URLError, socket.error:
+        except (URLError, socket_error, BadStatusLine) as e:
+            s = "Error for URL {0}:\n\t{1}: {2}".format(
+                url, e.errno, e.strerror)
+            self.log(s)
             raise CommandError('URL %s does not respond' % url)
+        except:
+            self.log(format_exc())
         return BeautifulSoup(page.read())
 
     def createOrUpdateSeries(self):
@@ -35,7 +43,10 @@ class Command(BaseCommand):
         #self.getInfosAboutSeries('http://stream-tv.me/watch-misfits-online/')
         for s in series:
             if not s.text.startswith('Watch '):
-                self.getInfosAboutSeries(s.get('href'))
+                try:
+                    self.getInfosAboutSeries(s.get('href'))
+                except:
+                    continue
 
     def getInfosAboutSeries(self, url, full_update=False):
         """
@@ -48,9 +59,29 @@ class Command(BaseCommand):
         # Parse the data about the series
         html = self.getParsedData(url)
 
+        # Get the series name from URL (url_keyword)
+        p = re.compile('http://stream-tv.me/watch-(.*)-online.*')
+        m = p.match(url)
+        try:
+            url_keyword = m.group(1)
+        except AttributeError:
+            # self.log('Could not get series name from url %s' % url)
+            p = re.compile('http://stream-tv.me/watch-(.*)/')
+            m = p.match(url)
+            try:
+                url_keyword = m.group(1)
+            except AttributeError:
+                self.log('Could not get series name from url %s' % url)
+
         # Test if the series exists. If it doesn't, create
-        # one with just a URL
-        _series, is_new = Series.objects.get_or_create(url=url)
+        # one with just a URL and a URL keyword
+        try:
+            _series = Series.objects.get(url_keyword=url_keyword)
+            is_new = False
+        except ObjectDoesNotExist:
+            _series = Series.objects.create(url=url, url_keyword=url_keyword)
+            is_new = True
+        # _series, is_new = Series.objects.get_or_create(url=url)
 
         # If the series has just been created (or if we want to
         # perform a complete update), we need to fill in the
