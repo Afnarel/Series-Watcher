@@ -37,8 +37,14 @@ class Episode(models.Model):
 
     @property
     def torrent_search(self):
-        return u"%s s%de%d" % (
-            self.season.series.name, self.season.number, self.real_number)
+        season_number = str(self.season.number)
+        if len(season_number) < 2:
+            season_number = '0' + season_number
+        ep_number = self.real_number
+        if len(ep_number) < 2:
+            ep_number = '0' + ep_number
+        return u"%s s%se%s" % (
+            self.season.series.name, season_number, ep_number)
 
     def __unicode__(self):
         if self.name:
