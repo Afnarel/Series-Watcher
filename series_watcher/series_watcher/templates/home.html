@@ -44,8 +44,11 @@ $(document).ready(function() {
 have subscribed to:</p>
     <ul id="episodes-list">
     {% for episode in episodes %}
-    <li><a href="{{episode.url}}">{{episode}}</a> (<a href="javascript:;"
-        class="episode-link" epid="{{episode.id}}">I've seen it</a>)</li>
+    <li>
+        <a href="{{episode.url}}">{{episode}}</a>
+        (<a href="javascript:;" class="episode-link" epid="{{episode.id}}">I've seen it</a>)
+        (<a href="http://thepiratebay.se/search/{{episode.name}}/0/7/205">Search torrent</a>)
+    </li>
     {% endfor %}
     </ul>
 {% endif %}
