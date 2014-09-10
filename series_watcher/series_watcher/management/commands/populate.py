@@ -43,7 +43,10 @@ class Command(BaseCommand):
         #self.getInfosAboutSeries('http://stream-tv.me/watch-misfits-online/')
         for s in series:
             if not s.text.startswith('Watch '):
-                self.getInfosAboutSeries(s.get('href'))
+                try:
+                    self.getInfosAboutSeries(s.get('href'))
+                except:
+                    continue
 
     def getInfosAboutSeries(self, url, full_update=False):
         """
@@ -57,18 +60,18 @@ class Command(BaseCommand):
         html = self.getParsedData(url)
 
         # Get the series name from URL (url_keyword)
+        p = re.compile('http://stream-tv.me/watch-(.*)-online.*')
+        m = p.match(url)
         try:
-            p = re.compile('http://stream-tv.me/watch-(.*)-online.*')
-            m = p.match(url)
-            print url,
             url_keyword = m.group(1)
-            print url_keyword
         except AttributeError:
-            p = re.compile('http://stream-tv.me/watch-([^/]*)/')
+            # self.log('Could not get series name from url %s' % url)
+            p = re.compile('http://stream-tv.me/watch-(.*)/')
             m = p.match(url)
-            print url,
-            url_keyword = m.group(1)
-            print url_keyword
+            try:
+                url_keyword = m.group(1)
+            except AttributeError:
+                self.log('Could not get series name from url %s' % url)
 
         # Test if the series exists. If it doesn't, create
         # one with just a URL and a URL keyword

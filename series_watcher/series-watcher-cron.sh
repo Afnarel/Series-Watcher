@@ -1,6 +1,6 @@
 #!/bin/sh
 
-VIRTUALENV=/home/afnarel/.virtualenvs/series-watcher
+VIRTUALENV=/home/angel/.virtualenvs/series-watcher
 
 SCRIPT=$(readlink -f $0)
 SCRIPT_PATH=$(dirname $SCRIPT)
