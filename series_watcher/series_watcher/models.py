@@ -35,6 +35,10 @@ class Episode(models.Model):
     url = models.URLField(blank=True)
     watchers = models.ManyToManyField(User, blank=True)
 
+    def torrent_search(self):
+        return u"%s s%de%d" % (
+            self.season.series.name, self.season.number, self.real_number)
+
     def __unicode__(self):
         if self.name:
             return u"%s Season %d Episode %s – %s" % (
