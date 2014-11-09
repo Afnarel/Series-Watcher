@@ -1,6 +1,8 @@
 # Django settings for series_watcher project.
 import os
 
+STREAMTV_URL = 'http://streamtvlinks.me'
+
 PROJECT_ROOT = os.path.dirname(__file__)
 
 DEBUG = True

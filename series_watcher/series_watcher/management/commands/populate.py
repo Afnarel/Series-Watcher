@@ -11,6 +11,7 @@ from time import strftime
 from socket import error as socket_error
 from httplib import BadStatusLine
 from traceback import format_exc
+from django.conf import settings
 
 
 class Command(BaseCommand):
@@ -35,12 +36,12 @@ class Command(BaseCommand):
         return BeautifulSoup(page.read())
 
     def createOrUpdateSeries(self):
-        url = 'http://stream-tv.me/'
-        html = self.getParsedData(url)
-        series = html.findAll('a', href=re.compile(
-                              "^http://stream-tv.me/watch"))
+        html = self.getParsedData(settings.STREAMTV_URL)
+        regex = "^%s/watch" % settings.STREAMTV_URL
+        series = html.findAll('a', href=re.compile(regex))
 
-        #self.getInfosAboutSeries('http://stream-tv.me/watch-misfits-online/')
+        #self.getInfosAboutSeries(
+        #    "%s/watch-misfits-online/" % settings.STREAMTV_URL)
         for s in series:
             if not s.text.startswith('Watch '):
                 try:
@@ -60,13 +61,15 @@ class Command(BaseCommand):
         html = self.getParsedData(url)
 
         # Get the series name from URL (url_keyword)
-        p = re.compile('http://stream-tv.me/watch-(.*)-online.*')
+        regex = "%s/watch-(.*)-online.*" % settings.STREAMTV_URL
+        p = re.compile(regex)
         m = p.match(url)
         try:
             url_keyword = m.group(1)
         except AttributeError:
             # self.log('Could not get series name from url %s' % url)
-            p = re.compile('http://stream-tv.me/watch-(.*)/')
+            regex2 = "%s/watch-(.*)/" % settings.STREAMTV_URL
+            p = re.compile(regex2)
             m = p.match(url)
             try:
                 url_keyword = m.group(1)
