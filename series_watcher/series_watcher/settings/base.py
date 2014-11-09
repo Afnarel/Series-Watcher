@@ -2,6 +2,7 @@
 import os
 
 STREAMTV_URL = 'http://streamtvlinks.me'
+BASE_REGEX = "^%s(/\d+/\d+)?" % STREAMTV_URL
 
 PROJECT_ROOT = os.path.dirname(__file__)
 
@@ -18,7 +19,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',  # Add 'postgresql_psycopg2',
                                                  #'mysql' 'sqlite3' 'oracle'
-        'NAME': '/home/angel/Series-Watcher/series_watcher/db.sqlite3',  # Or path to database file if using sqlite3.
+        'NAME': '/home/afnarel/Documents/projects/GitHub/Series-Watcher/series_watcher/db.sqlite3',  # Or path to database file if using sqlite3.
         'USER': '',  # Not used with sqlite3.
         'PASSWORD': '',  # Not used with sqlite3.
         'HOST': '',  # Set to empty string for localhost. Not used with sqlite3

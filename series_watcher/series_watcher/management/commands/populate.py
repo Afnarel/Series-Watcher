@@ -4,7 +4,6 @@ from django.core.management.base import BaseCommand, CommandError
 from series_watcher.models import Series, Season, Episode
 from django.core.exceptions import ObjectDoesNotExist
 
-from urllib2 import urlopen, URLError
 from bs4 import BeautifulSoup
 import re
 from time import strftime
@@ -12,6 +11,7 @@ from socket import error as socket_error
 from httplib import BadStatusLine
 from traceback import format_exc
 from django.conf import settings
+import urllib2
 
 
 class Command(BaseCommand):
@@ -25,8 +25,12 @@ class Command(BaseCommand):
 
     def getParsedData(self, url):
         try:
-            page = urlopen(url)
-        except (URLError, socket_error, BadStatusLine) as e:
+            request = urllib2.Request(url)
+            opener = urllib2.build_opener()
+            request.add_header('User-Agent', "Mozilla/5.0 (X11; U; Linux i686) Gecko/20071127 Firefox/2.0.0.11")
+            page = opener.open(request)  # .read()
+            # page = urlopen(url)
+        except (urllib2.URLError, socket_error, BadStatusLine) as e:
             s = "Error for URL {0}:\n\t{1}: {2}".format(
                 url, e.errno, e.strerror)
             self.log(s)
@@ -37,11 +41,11 @@ class Command(BaseCommand):
 
     def createOrUpdateSeries(self):
         html = self.getParsedData(settings.STREAMTV_URL)
-        regex = "^%s/watch" % settings.STREAMTV_URL
+        regex = "%s/watch" % settings.BASE_REGEX
         series = html.findAll('a', href=re.compile(regex))
 
         #self.getInfosAboutSeries(
-        #    "%s/watch-misfits-online/" % settings.STREAMTV_URL)
+        #    "%s/watch-misfits-online/" % settings.BASE_REGEX)
         for s in series:
             if not s.text.startswith('Watch '):
                 try:
@@ -61,14 +65,14 @@ class Command(BaseCommand):
         html = self.getParsedData(url)
 
         # Get the series name from URL (url_keyword)
-        regex = "%s/watch-(.*)-online.*" % settings.STREAMTV_URL
+        regex = "%s/watch-(.*)-online.*" % settings.BASE_REGEX
         p = re.compile(regex)
         m = p.match(url)
         try:
             url_keyword = m.group(1)
         except AttributeError:
             # self.log('Could not get series name from url %s' % url)
-            regex2 = "%s/watch-(.*)/" % settings.STREAMTV_URL
+            regex2 = "%s/watch-(.*)/" % settings.BASE_REGEX
             p = re.compile(regex2)
             m = p.match(url)
             try:
