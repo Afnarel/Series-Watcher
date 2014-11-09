@@ -16,14 +16,33 @@ Setup
 
 ### How to start the web interface
 
-  * Use pip to install the dependencies: `pip install -r requirements.txt`
-  * Create the database: `python manage.py syncdb`
-  * Use whatever server you want:
-    * Using the Django development server (not suitable for production):
-        `python manage.py runserver`
-    * Using [gunicorn](http://gunicorn.org/) (you will need to serve static
-      files separately):
-        `gunicorn_django /path/to/series_watcher/settings.py`
+~~~
+# Clone the repository
+git clone https://github.com/Afnarel/Series-Watcher.git
+
+# Enter the project directory
+cd Series-Watcher
+
+# Use pip to install the dependencies
+pip2 install -r requirements.txt
+
+# Enter the subdirectory
+cd series_watcher
+
+# Edit the database settings in series_watcher/settings/base.py
+# to set a correct absolute path to the SQLite database
+
+# Create the database
+python2 manage.py syncdb --settings=series_watcher.settings.production
+~~~
+
+Then, use whatever server you want:
+
+  * Using the Django development server (not suitable for production):
+      `python manage.py runserver`
+  * Using [gunicorn](http://gunicorn.org/) (you will need to serve static
+    files separately):
+      `gunicorn_django /path/to/series_watcher/settings.py`
 
 ### How to create and update the database
 
