@@ -12,6 +12,7 @@ from httplib import BadStatusLine
 from traceback import format_exc
 from django.conf import settings
 import urllib2
+import sys
 
 
 class Command(BaseCommand):
@@ -69,14 +70,14 @@ class Command(BaseCommand):
         p = re.compile(regex)
         m = p.match(url)
         try:
-            url_keyword = m.group(1)
+            url_keyword = m.group(2)
         except AttributeError:
             # self.log('Could not get series name from url %s' % url)
             regex2 = "%s/watch-(.*)/" % settings.BASE_REGEX
             p = re.compile(regex2)
             m = p.match(url)
             try:
-                url_keyword = m.group(1)
+                url_keyword = m.group(2)
             except AttributeError:
                 self.log('Could not get series name from url %s' % url)
 
@@ -219,6 +220,8 @@ class Command(BaseCommand):
                 season_nb += 1
 
     def handle(self, *args, **options):
+        reload(sys)
+        sys.setdefaultencoding('utf8')
         self.log("Starting check")
         self.createOrUpdateSeries()
         self.log("Check finished")
