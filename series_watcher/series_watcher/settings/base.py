@@ -19,7 +19,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',  # Add 'postgresql_psycopg2',
                                                  #'mysql' 'sqlite3' 'oracle'
-        'NAME': '/home/afnarel/Documents/projects/GitHub/Series-Watcher/series_watcher/db.sqlite3',  # Or path to database file if using sqlite3.
+        'NAME': os.path.join(PROJECT_ROOT, '../../db.sqlite3'),
         'USER': '',  # Not used with sqlite3.
         'PASSWORD': '',  # Not used with sqlite3.
         'HOST': '',  # Set to empty string for localhost. Not used with sqlite3
