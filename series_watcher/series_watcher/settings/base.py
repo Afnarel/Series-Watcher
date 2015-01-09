@@ -1,7 +1,7 @@
 # Django settings for series_watcher project.
 import os
 
-STREAMTV_URL = 'http://streamtvlinks.me'
+STREAMTV_URL = 'http://stream-tv.co'
 BASE_REGEX = "^%s(/\d+/\d+)?" % STREAMTV_URL
 
 PROJECT_ROOT = os.path.dirname(__file__)
